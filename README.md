@@ -33,3 +33,7 @@ Images are named `ejconlon/haskell-custom:${GHC_VERSION}`.
 
     # Build and push a bunch of versions
     ./script/all.sh
+
+## License
+
+The `Dockerfile` here is based on the one from the official Haskell image builder. It is [MIT-licensed](https://github.com/haskell/docker-haskell/blob/master/LICENSE) and this follows.
