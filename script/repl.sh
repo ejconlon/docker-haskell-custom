@@ -5,6 +5,7 @@ set -eux
 GHC="$1"
 shift
 
-TAG="ejconlon/haskell-custom:${GHC}"
+NAMESPACE="${NAMESPACE:-ejconlon}"
+TAG="${NAMESPACE}/haskell-custom:${GHC}"
 
 docker run -it ${TAG} /bin/bash

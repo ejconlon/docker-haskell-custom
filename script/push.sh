@@ -5,5 +5,6 @@ set -eux
 GHC="$1"
 shift
 
-cat ~/.dockerhub | docker login --username=ejconlon --password-stdin
-docker push ejconlon/haskell-custom:${GHC}
+NAMESPACE="${NAMESPACE:-ejconlon}"
+
+docker push ${NAMESPACE}/haskell-custom:${GHC}
