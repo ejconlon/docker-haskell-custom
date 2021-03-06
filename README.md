@@ -4,6 +4,19 @@ Custom Docker images for Haskell.
 
 Sometimes the official images lag a bit. This uses `ghcup` to assemble reasonable images for recent compiler releases and pushes them to `ejconlon/haskell-custom` on [DockerHub](https://hub.docker.com/repository/docker/ejconlon/haskell-custom).
 
+## Use with Stack
+
+Here's an example `stack.yaml` that will let you build with `stack build --docker`:
+
+    resolver: lts-17.5
+
+    docker:
+        repo: "ejconlon/haskell-custom:8.10.4"
+        stack-exe: image
+
+    packages:
+    - .
+
 ## GHC versions
 
 Images are built for the following GHC versions:
