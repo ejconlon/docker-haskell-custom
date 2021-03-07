@@ -11,6 +11,7 @@ Here's an example `stack.yaml` that will let you build with `stack build --docke
     resolver: lts-17.5
 
     docker:
+        enable: false
         repo: "ejconlon/haskell-custom:8.10.4"
         stack-exe: image
 
