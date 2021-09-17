@@ -2,7 +2,7 @@
 
 set -eux
 
-VERSIONS="8.10.3 8.10.4 9.0.1"
+VERSIONS="8.10.7 9.0.1"
 
 for VERSION in ${VERSIONS}
 do

@@ -1,4 +1,6 @@
-FROM debian:buster
+# Parameterized by args ARCH (aarch64/x86_64), and version numbers for GHC, CABAL_INSTALL, and STACK
+
+FROM debian:bullseye
 
 ENV LANG C.UTF-8
 
@@ -7,9 +9,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ARG DEBIAN_KEY=427CB69AAC9D00F2A43CAF1CBA3CBA3FFE22B574
-ARG STACK=2.5.1
-ARG STACK_KEY=C5705533DA4F78D8664B5DC0575159689BEFB442
-ARG STACK_RELEASE_KEY=2C6A674E85EE3FB896AFC9B965101FF31C5C154D
 
 RUN export GNUPGHOME="$(mktemp -d)" && \
     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys ${DEBIAN_KEY} && \
@@ -31,29 +30,22 @@ RUN export GNUPGHOME="$(mktemp -d)" && \
         zlib1g-dev && \
     rm -rf "$GNUPGHOME" /var/lib/apt/lists/*
 
-RUN export GNUPGHOME="$(mktemp -d)" && \
-    gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys ${STACK_KEY} && \
-    gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys ${STACK_RELEASE_KEY} && \
-    curl -fSL https://github.com/commercialhaskell/stack/releases/download/v${STACK}/stack-${STACK}-linux-x86_64.tar.gz -o stack.tar.gz && \
-    curl -fSL https://github.com/commercialhaskell/stack/releases/download/v${STACK}/stack-${STACK}-linux-x86_64.tar.gz.asc -o stack.tar.gz.asc && \
-    gpg --batch --trusted-key 0x575159689BEFB442 --verify stack.tar.gz.asc stack.tar.gz && \
-    tar -xf stack.tar.gz -C /usr/local/bin --strip-components=1 && \
-    /usr/local/bin/stack config set system-ghc --global true && \
-    /usr/local/bin/stack config set install-ghc --global false && \
-    rm -rf "$GNUPGHOME" /var/lib/apt/lists/* /stack.tar.gz.asc /stack.tar.gz
-
-RUN curl -fSL https://downloads.haskell.org/~ghcup/x86_64-linux-ghcup -o /usr/local/bin/ghcup && \
+ARG ARCH
+RUN curl -fSL https://downloads.haskell.org/~ghcup/${ARCH}-linux-ghcup -o /usr/local/bin/ghcup && \
     chmod +x /usr/local/bin/ghcup && \
     ghcup upgrade -if
 
 ARG GHC
-RUN ghcup install ghc ${GHC} && \
-    ghcup set ghc ${GHC}
+RUN ghcup install ghc ${GHC} --set
 
 ARG CABAL_INSTALL
-RUN ghcup install cabal ${CABAL_INSTALL} && \
-    ghcup set cabal ${CABAL_INSTALL}
+RUN ghcup install cabal ${CABAL_INSTALL} --set
 
-ENV PATH /root/.cabal/bin:/root/.local/bin:/root/.ghcup/bin:$PATH
+ARG STACK
+RUN ghcup install stack ${STACK} --set && \
+    stack config set system-ghc --global true && \
+    stack config set install-ghc --global false
+
+ENV PATH /root/.local/bin:/root/.cabal/bin:/root/.ghcup/bin:$PATH
 
 CMD ["ghci"]

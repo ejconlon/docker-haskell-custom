@@ -7,4 +7,4 @@ shift
 
 NAMESPACE="${NAMESPACE:-ejconlon}"
 
-docker push ${NAMESPACE}/haskell-custom:${GHC}
+docker push ${NAMESPACE}/haskell-custom:${GHC}-${ARCH}
