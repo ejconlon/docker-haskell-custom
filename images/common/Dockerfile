@@ -22,7 +22,7 @@ RUN export GNUPGHOME="$(mktemp -d)" && \
         libgmp-dev \
         libnuma-dev \
         libsqlite3-dev \
-        libtinfo-dev \
+        libtinfo5 \
         make \
         netbase \
         openssh-client \
@@ -33,7 +33,10 @@ RUN export GNUPGHOME="$(mktemp -d)" && \
 ARG ARCH
 RUN curl -fSL https://downloads.haskell.org/~ghcup/${ARCH}-linux-ghcup -o /usr/local/bin/ghcup && \
     chmod +x /usr/local/bin/ghcup && \
-    ghcup upgrade -if
+    ghcup upgrade -if && \
+    mkdir -p /root/.local/bin /root/.cabal/bin
+
+ENV PATH /root/.local/bin:/root/.cabal/bin:/root/.ghcup/bin:$PATH
 
 ARG GHC
 RUN ghcup install ghc ${GHC} --set
@@ -45,7 +48,5 @@ ARG STACK
 RUN ghcup install stack ${STACK} --set && \
     stack config set system-ghc --global true && \
     stack config set install-ghc --global false
-
-ENV PATH /root/.local/bin:/root/.cabal/bin:/root/.ghcup/bin:$PATH
 
 CMD ["ghci"]
